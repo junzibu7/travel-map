@@ -76,8 +76,16 @@ def process_photos_and_generate_map(local_photo_dir, cloud_base_url):
                 
                 lat = dms_to_decimal(lat_dms, lat_ref)
                 lon = dms_to_decimal(lon_dms, lon_ref)
-                date_time = tags.get('EXIF DateTimeOriginal', '未知时间')
                 image_url = get_encoded_url(cloud_base_url, rel_path)
+
+                # 提取 EXIF 原始时间标签的内存对象
+                raw_date_time = tags.get('EXIF DateTimeOriginal')
+                if raw_date_time:
+                    # 强制进行类型转换以获取 ASCII 文本
+                    # 并利用限定执行次数的字符串替换，将标准格式重构为 YYYY-MM-DD HH:MM:SS
+                    date_time = str(raw_date_time).replace(':', '-', 2)
+                else:
+                    date_time = '未知时间'
                 
                 # 语义提取：分离相对路径的目录结构并生成中文标签
                 dir_parts = os.path.normpath(os.path.dirname(rel_path)).split(os.sep)
