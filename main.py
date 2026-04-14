@@ -106,45 +106,59 @@ def process_photos_and_generate_map(local_photo_dir, cloud_base_url):
         center_lat = sum(p['lat'] for p in photos) / len(photos)
         center_lon = sum(p['lon'] for p in photos) / len(photos)
         
-        # 弹窗布局：尺度因子 k=3
+        # 引入响应式视口策略与媒体查询，重构弹窗渲染布局
         gallery_html = f"""
         <style>
-            .leaflet-popup-content {{ margin: 24px !important; width: 960px !important; }}
+            /* 默认状态下的高分辨率宽屏显示器渲染策略 */
+            .leaflet-popup-content {{ margin: 24px !important; width: 960px !important; max-width: 90vw !important; }}
             .leaflet-popup-content p {{ margin: 0 !important; }}
+            .gallery-container {{ width: 100%; font-family: sans-serif; }}
+            .gallery-title {{ margin: 0 0 24px 0; color: #2c3e50; text-align: center; border-bottom: 3px solid #ecf0f1; padding-bottom: 18px; font-size: 30px; }}
+            .gallery-count {{ font-size: 24px; color: #7f8c8d; }}
+            .nav-button {{ background: #3498db; color: white; border: none; border-radius: 50%; width: 72px; height: 72px; cursor: pointer; font-size: 36px; display: flex; align-items: center; justify-content: center; box-shadow: 0 3px 12px rgba(0,0,0,0.2); flex-shrink: 0; padding: 0; transform: translateY(-30px); outline: none; }}
+            .image-node {{ width: 100%; height: 600px; object-fit: cover; border-radius: 18px; box-shadow: 0 6px 18px rgba(0,0,0,0.15); cursor: pointer; }}
+            .date-label {{ margin: 18px 0 0 0; font-size: 30px; color: #7f8c8d; }}
+            
+            /* 移动端视口自适应降级策略 (激活阈值: 768px) */
+            @media (max-width: 768px) {{
+                .leaflet-popup-content {{ margin: 12px !important; width: 320px !important; max-width: 85vw !important; }}
+                .gallery-title {{ font-size: 20px; margin: 0 0 12px 0; padding-bottom: 10px; }}
+                .gallery-count {{ font-size: 16px; }}
+                .nav-button {{ width: 40px; height: 40px; font-size: 20px; transform: translateY(-15px); }}
+                .image-node {{ height: 250px; border-radius: 10px; }}
+                .date-label {{ font-size: 16px; margin: 10px 0 0 0; }}
+            }}
         </style>
-        <div style="width: 960px; font-family: sans-serif;">
+        <div class="gallery-container">
         """
         
-        # 标题与副标题字号同步放大
-        gallery_html += f'<h4 style="margin: 0 0 24px 0; color: #2c3e50; text-align: center; border-bottom: 3px solid #ecf0f1; padding-bottom: 18px; font-size: 30px;">{label} <span style="font-size: 24px; color: #7f8c8d;">({len(photos)}张)</span></h4>'
+        gallery_html += f'<h4 class="gallery-title">{label} <span class="gallery-count">({len(photos)}张)</span></h4>'
         
-        # 导航按钮与滚动容器：补偿位移调整为 -30px (10px * 3)
+        # 导航按钮位移矢量调整为基于运行时 DOM 状态的动态提取
         gallery_html += f"""
-        <div style="display: flex; align-items: center; gap: 24px;">
-            <button onclick="document.getElementById('gallery_{label}').scrollBy({{left: -960, behavior: 'smooth'}})" style="background: #3498db; color: white; border: none; border-radius: 50%; width: 72px; height: 72px; cursor: pointer; font-size: 36px; display: flex; align-items: center; justify-content: center; box-shadow: 0 3px 12px rgba(0,0,0,0.2); flex-shrink: 0; padding: 0; transform: translateY(-30px); outline: none;">
-                <span style="display: block; margin-top: -4.5px; margin-left: -4.5px;">&#10094;</span>
+        <div style="display: flex; align-items: center; gap: 4%;">
+            <button onclick="var g = document.getElementById('gallery_{label}'); g.scrollBy({{left: -g.clientWidth, behavior: 'smooth'}})" class="nav-button">
+                <span style="display: block; margin-top: -2px; margin-left: -2px;">&#10094;</span>
             </button>
-            <div id="gallery_{label}" style="display: flex; overflow-x: auto; gap: 24px; scroll-snap-type: x mandatory; padding-bottom: 12px; flex: 1; scroll-behavior: smooth;">
+            <div id="gallery_{label}" style="display: flex; overflow-x: auto; gap: 4%; scroll-snap-type: x mandatory; padding-bottom: 12px; flex: 1; scroll-behavior: smooth;">
         """
         
-        # 影像节点渲染：高度设为 600px
         for p in photos:
             img_url = p['url']
             img_date = p['date']
             gallery_html += f"""
             <div style="flex: 0 0 100%; scroll-snap-align: start; text-align: center;">
                 <a href="#" onclick="if(confirm('确定要下载这张高清图片吗？')){{window.open('{img_url}', '_blank');}} return false;" style="text-decoration: none;">
-                    <img src="{img_url}" style="width: 100%; height: 600px; object-fit: cover; border-radius: 18px; box-shadow: 0 6px 18px rgba(0,0,0,0.15); cursor: pointer;">
+                    <img src="{img_url}" class="image-node">
                 </a>
-                <p style="margin: 18px 0 0 0; font-size: 30px; color: #7f8c8d;">拍摄时间: {img_date}</p>
+                <p class="date-label">拍摄时间: {img_date}</p>
             </div>
             """
             
         gallery_html += '</div>'
-        # 右侧按钮同步执行几何补偿与光学居中调整
         gallery_html += f"""
-            <button onclick="document.getElementById('gallery_{label}').scrollBy({{left: 960, behavior: 'smooth'}})" style="background: #3498db; color: white; border: none; border-radius: 50%; width: 72px; height: 72px; cursor: pointer; font-size: 36px; display: flex; align-items: center; justify-content: center; box-shadow: 0 3px 12px rgba(0,0,0,0.2); flex-shrink: 0; padding: 0; transform: translateY(-30px); outline: none;">
-                <span style="display: block; margin-top: -4.5px; margin-left: 4.5px;">&#10095;</span>
+            <button onclick="var g = document.getElementById('gallery_{label}'); g.scrollBy({{left: g.clientWidth, behavior: 'smooth'}})" class="nav-button">
+                <span style="display: block; margin-top: -2px; margin-left: 2px;">&#10095;</span>
             </button>
         </div></div>
         """
@@ -174,7 +188,7 @@ def process_photos_and_generate_map(local_photo_dir, cloud_base_url):
         folium.Marker(
             location=[center_lat, center_lon],
             tooltip=custom_tooltip,
-            popup=folium.Popup(gallery_html, max_width=450),
+            popup=folium.Popup(gallery_html, max_width=1000),
             icon=custom_icon
         ).add_to(marker_cluster)
         
