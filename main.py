@@ -3,6 +3,7 @@ import exifread
 import folium
 import urllib.parse
 from collections import defaultdict
+from folium.plugins import MarkerCluster
 
 def dms_to_decimal(dms_list, ref):
     """将 EXIF 中的度分秒格式转换为 WGS84 十进制度"""
@@ -25,6 +26,32 @@ def get_encoded_url(cloud_base_url, relative_path):
 def process_photos_and_generate_map(local_photo_dir, cloud_base_url):
     print(f"系统开始扫描数据源目录及其底层子架构: {local_photo_dir}")
     m = folium.Map(location=[26.0, 100.0], zoom_start=5, tiles="CartoDB positron")
+    
+    # 构建 JavaScript 回调函数，接管底层聚类图标的渲染管线
+    cluster_icon_js = """
+    function(cluster) {
+        var count = cluster.getChildCount();
+        // 动态生成与独立标记拓扑一致的 SVG 矢量流，并利用 dy=".3em" 实现数字的绝对光学居中
+        var svg = '<svg width="16" height="20" viewBox="0 0 16 20" xmlns="http://www.w3.org/2000/svg">' +
+                  '<polygon points="2,11 14,11 8,20" fill="#3498db" />' +
+                  '<circle cx="8" cy="8" r="5.8" fill="white" stroke="#3498db" stroke-width="1.4" />' +
+                  '<text x="8" y="8.5" dy=".3em" font-size="8" font-family="sans-serif" font-weight="bold" fill="#3498db" text-anchor="middle">' + count + '</text>' +
+                  '</svg>';
+                  
+        return L.divIcon({
+            html: svg,
+            className: 'custom-cluster-marker', // 注入自定义类名以屏蔽引擎默认的背景渲染
+            iconSize: L.point(16, 20),
+            iconAnchor: L.point(8, 20)
+        });
+    }
+    """
+    
+    # 实例化空间聚类容器，同步注入自定义渲染函数与聚合物理距离阈值
+    marker_cluster = MarkerCluster(
+        maxClusterRadius=15,
+        icon_create_function=cluster_icon_js
+    ).add_to(m)
     
     # 构建空间簇字典，键为提取的地理标签，值为影像节点列表
     cluster_data = defaultdict(list)
@@ -54,7 +81,8 @@ def process_photos_and_generate_map(local_photo_dir, cloud_base_url):
                 
                 # 语义提取：分离相对路径的目录结构并生成中文标签
                 dir_parts = os.path.normpath(os.path.dirname(rel_path)).split(os.sep)
-                location_label = "，".join([p for p in dir_parts if p]) if dir_parts[0] != '.' else "未分类影像"
+                # location_label = "，".join([p for p in dir_parts if p]) if dir_parts[0] != '.' else "未分类影像"
+                location_label = dir_parts[-1] if dir_parts and dir_parts[0] != '.' else "未分类影像"
                 
                 cluster_data[location_label].append({
                     'lat': lat,
@@ -114,10 +142,10 @@ def process_photos_and_generate_map(local_photo_dir, cloud_base_url):
         </div></div>
         """
         
-        # 1. 显式实例化 Tooltip 组件并注入 CSS 内联样式，将字体收敛至 10px
+        # 1. 显式实例化 Tooltip 组件并注入 CSS 内联样式
         custom_tooltip = folium.Tooltip(
             label,
-            style="font-size: 10px; padding: 2px 4px; border-radius: 3px; background-color: rgba(255, 255, 255, 0.95); box-shadow: 0 1px 3px rgba(0,0,0,0.2);"
+            style="font-size: 10px;"
         )
         
         # 构建矢量大头针
@@ -141,7 +169,7 @@ def process_photos_and_generate_map(local_photo_dir, cloud_base_url):
             tooltip=custom_tooltip,
             popup=folium.Popup(gallery_html, max_width=450),
             icon=custom_icon
-        ).add_to(m)
+        ).add_to(marker_cluster)
         
         print(f"已构建聚类节点: {label} -> 包含 {len(photos)} 张影像，质心坐标: ({center_lat:.4f}, {center_lon:.4f})")
             
