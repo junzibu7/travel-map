@@ -127,6 +127,8 @@ def process_photos_and_generate_map(local_photo_dir, cloud_base_url):
                 .gallery-title {{ font-size: 20px; margin: 0 0 12px 0; padding-bottom: 10px; }}
                 .gallery-count {{ font-size: 16px; }}
                 .nav-button {{ width: 40px; height: 40px; font-size: 20px; }}
+                .nav-button-left {{ transform: translateY(10px); }}
+                .nav-button-right {{ transform: translateY(10px); }}
                 .image-node {{ height: 250px; border-radius: 10px; }}
                 .date-label {{ font-size: 16px; margin: 10px 0 0 0; }}
             }}
