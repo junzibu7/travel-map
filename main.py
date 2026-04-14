@@ -115,7 +115,9 @@ def process_photos_and_generate_map(local_photo_dir, cloud_base_url):
             .gallery-container {{ width: 100%; font-family: sans-serif; }}
             .gallery-title {{ margin: 0 0 24px 0; color: #2c3e50; text-align: center; border-bottom: 3px solid #ecf0f1; padding-bottom: 18px; font-size: 30px; }}
             .gallery-count {{ font-size: 24px; color: #7f8c8d; }}
-            .nav-button {{ background: #3498db; color: white; border: none; border-radius: 50%; width: 72px; height: 72px; cursor: pointer; font-size: 36px; display: flex; align-items: center; justify-content: center; box-shadow: 0 3px 12px rgba(0,0,0,0.2); flex-shrink: 0; padding: 0; transform: translateY(-30px); outline: none; }}
+            .nav-button {{ background: #3498db; color: white; border: none; border-radius: 50%; width: 72px; height: 72px; cursor: pointer; font-size: 36px; display: flex; align-items: center; justify-content: center; box-shadow: 0 3px 12px rgba(0,0,0,0.2); flex-shrink: 0; padding: 0; outline: none; }}
+            .nav-button-left {{ transform: translateY(-30px) translateX(8px); }}
+            .nav-button-right {{ transform: translateY(-30px) translateX(-8px); }}
             .image-node {{ width: 100%; height: 600px; object-fit: cover; border-radius: 18px; box-shadow: 0 6px 18px rgba(0,0,0,0.15); cursor: pointer; }}
             .date-label {{ margin: 18px 0 0 0; font-size: 30px; color: #7f8c8d; }}
             
@@ -124,7 +126,9 @@ def process_photos_and_generate_map(local_photo_dir, cloud_base_url):
                 .leaflet-popup-content {{ margin: 12px !important; width: 320px !important; max-width: 85vw !important; }}
                 .gallery-title {{ font-size: 20px; margin: 0 0 12px 0; padding-bottom: 10px; }}
                 .gallery-count {{ font-size: 16px; }}
-                .nav-button {{ width: 40px; height: 40px; font-size: 20px; transform: translateY(-15px); }}
+                .nav-button {{ width: 40px; height: 40px; font-size: 20px; }}
+                .nav-button-left {{ transform: translateY(-15px) translateX(5px); }}
+                .nav-button-right {{ transform: translateY(-15px) translateX(-5px); }}
                 .image-node {{ height: 250px; border-radius: 10px; }}
                 .date-label {{ font-size: 16px; margin: 10px 0 0 0; }}
             }}
@@ -134,11 +138,11 @@ def process_photos_and_generate_map(local_photo_dir, cloud_base_url):
         
         gallery_html += f'<h4 class="gallery-title">{label} <span class="gallery-count">({len(photos)}张)</span></h4>'
         
-        # 导航按钮位移矢量调整为基于运行时 DOM 状态的动态提取
+        # 将左侧按钮赋予 nav-button-left 样式类
         gallery_html += f"""
         <div style="display: flex; align-items: center; gap: 4%;">
-            <button onclick="var g = document.getElementById('gallery_{label}'); g.scrollBy({{left: -g.clientWidth, behavior: 'smooth'}})" class="nav-button">
-                <span style="display: block; margin-top: -2px; margin-left: -2px;">&#10094;</span>
+            <button onclick="var g = document.getElementById('gallery_{label}'); g.scrollBy({{left: -g.clientWidth, behavior: 'smooth'}})" class="nav-button nav-button-left">
+                <span style="display: block; transform: translate(-2.5px, -3px);">&#10094;</span>
             </button>
             <div id="gallery_{label}" style="display: flex; overflow-x: auto; gap: 4%; scroll-snap-type: x mandatory; padding-bottom: 12px; flex: 1; scroll-behavior: smooth;">
         """
@@ -156,9 +160,10 @@ def process_photos_and_generate_map(local_photo_dir, cloud_base_url):
             """
             
         gallery_html += '</div>'
+        # 将右侧按钮赋予 nav-button-right 样式类
         gallery_html += f"""
-            <button onclick="var g = document.getElementById('gallery_{label}'); g.scrollBy({{left: g.clientWidth, behavior: 'smooth'}})" class="nav-button">
-                <span style="display: block; margin-top: -2px; margin-left: 2px;">&#10095;</span>
+            <button onclick="var g = document.getElementById('gallery_{label}'); g.scrollBy({{left: g.clientWidth, behavior: 'smooth'}})" class="nav-button nav-button-right">
+                <span style="display: block; transform: translate(2.5px, -3px);">&#10095;</span>
             </button>
         </div></div>
         """
