@@ -54,7 +54,7 @@ def process_photos_and_generate_map(local_photo_dir, cloud_base_url):
                 
                 # 语义提取：分离相对路径的目录结构并生成中文标签
                 dir_parts = os.path.normpath(os.path.dirname(rel_path)).split(os.sep)
-                location_label = "，".join([p for p in dir_parts if p]) if dir_parts[0] else "未分类影像"
+                location_label = "，".join([p for p in dir_parts if p]) if dir_parts[0] != '.' else "未分类影像"
                 
                 cluster_data[location_label].append({
                     'lat': lat,
@@ -69,45 +69,64 @@ def process_photos_and_generate_map(local_photo_dir, cloud_base_url):
         # 求解当前地理区域的空间质心
         center_lat = sum(p['lat'] for p in photos) / len(photos)
         center_lon = sum(p['lon'] for p in photos) / len(photos)
-
-        # 构建基于 Flexbox 属性的横向滑动前端容器
+        
+        # 调整弹窗内部标题的字体尺度
         gallery_html = f'<div style="width: 400px; font-family: sans-serif;">'
-        gallery_html += f'<h4 style="margin: 0 0 15px 0; color: #2c3e50; text-align: center; border-bottom: 2px solid #ecf0f1; padding-bottom: 12px; font-size: 12px;">{label} <span style="font-size: 10px; color: #7f8c8d;">({len(photos)}张)</span></h4>'
-         
-        # 添加左右翻页按钮和图片容器
-        gallery_html += f'''
+        gallery_html += f'<h4 style="margin: 0 0 15px 0; color: #2c3e50; text-align: center; border-bottom: 2px solid #ecf0f1; padding-bottom: 12px; font-size: 14px;">{label} <span style="font-size: 11px; color: #7f8c8d;">({len(photos)}张)</span></h4>'
+        
+        # 左右翻页按钮和图片滚动容器
+        gallery_html += f"""
         <div style="display: flex; align-items: center; gap: 10px;">
             <button onclick="document.getElementById('gallery_{label}').scrollBy({{left: -400, behavior: 'smooth'}})" style="background: #3498db; color: white; border: none; border-radius: 50%; width: 40px; height: 40px; cursor: pointer; font-size: 20px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.2); flex-shrink: 0;">&#10094;</button>
             <div id="gallery_{label}" style="display: flex; overflow-x: auto; gap: 15px; scroll-snap-type: x mandatory; padding-bottom: 10px; flex: 1; scroll-behavior: smooth;">
-        '''
+        """
         
         # 动态注入簇内所有的独立影像流
         for p in photos:
-            gallery_html += f'''
+            # 将字典取值动作剥离出 f-string 内部，彻底消除引号转义冲突
+            img_url = p['url']
+            img_date = p['date']
+            
+            gallery_html += f"""
             <div style="flex: 0 0 100%; scroll-snap-align: start; text-align: center;">
-                <a href="#" onclick="if(confirm('确定要下载这张图片吗？')){{window.open('{p['url']}', '_blank');}} return false;" style="text-decoration: none;">
-                    <img src="{p['url']}" style="width: 100%; height: 250px; object-fit: cover; border-radius: 10px; box-shadow: 0 6px 12px rgba(0,0,0,0.15); cursor: pointer;">
+                <a href="#" onclick="if(confirm('确定要下载这张高清图片吗？')){{window.open('{img_url}', '_blank');}} return false;" style="text-decoration: none;" title="点击查看高清原图">
+                    <img src="{img_url}" style="width: 100%; height: 250px; object-fit: cover; border-radius: 10px; box-shadow: 0 6px 12px rgba(0,0,0,0.15); cursor: pointer;">
                 </a>
-                <p style="margin: 8px 0 0 0; font-size: 14px; color: #7f8c8d;">拍摄时间: {p['date']}</p>
+                <p style="margin: 8px 0 0 0; font-size: 14px; color: #7f8c8d;">拍摄时间: {img_date}</p>
             </div>
-            '''
+            """
             
         gallery_html += '</div>'
         gallery_html += f'<button onclick="document.getElementById(\'gallery_{label}\').scrollBy({{left: 400, behavior: \'smooth\'}})" style="background: #3498db; color: white; border: none; border-radius: 50%; width: 40px; height: 40px; cursor: pointer; font-size: 20px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.2); flex-shrink: 0;">&#10095;</button>'
         gallery_html += '</div></div>'
-
-        # 通过显式实例化 Tooltip 组件并注入 CSS 内联样式，将地图悬停标签的字号从标准值收敛至 8px
+        
+        # 1. 显式实例化 Tooltip 组件并注入 CSS 内联样式，将字体收敛至 10px
         custom_tooltip = folium.Tooltip(
             label,
-            style="font-size: 8px; padding: 2px 4px; border-radius: 3px; background-color: rgba(255, 255, 255, 0.95); box-shadow: 0 1px 3px rgba(0,0,0,0.2);"
+            style="font-size: 10px; padding: 2px 4px; border-radius: 3px; background-color: rgba(255, 255, 255, 0.95); box-shadow: 0 1px 3px rgba(0,0,0,0.2);"
         )
         
-        # 实例化地图组件，绑定聚合参数
+        # 构建矢量大头针
+        # 设计规范：16px x 32px 尺寸，蓝白配色
+        svg_icon = """
+        <svg width="16" height="20" viewBox="0 0 16 20" xmlns="http://www.w3.org/2000/svg">
+            <polygon points="2,11 14,11 8,20" fill="#3498db" />
+            <circle cx="8" cy="8" r="5.15" fill="white" stroke="#3498db" stroke-width="3" />
+        </svg>
+        """
+
+        custom_icon = folium.DivIcon(
+            html=svg_icon,
+            # 渲染锚点必须与 SVG 画布的新高度保持绝对同步
+            icon_anchor=(8, 20)
+        )
+
+        # 实例化地图组件，绑定聚合参数、自定义Tooltip和小巧的大头针图标
         folium.Marker(
             location=[center_lat, center_lon],
             tooltip=custom_tooltip,
             popup=folium.Popup(gallery_html, max_width=450),
-            icon=folium.Icon(color="darkblue", icon="images", prefix='fa')
+            icon=custom_icon
         ).add_to(m)
         
         print(f"已构建聚类节点: {label} -> 包含 {len(photos)} 张影像，质心坐标: ({center_lat:.4f}, {center_lon:.4f})")
@@ -116,7 +135,13 @@ def process_photos_and_generate_map(local_photo_dir, cloud_base_url):
     print(f"\n底层引擎重构与渲染执行完毕。共抽取 {valid_count} 个物理节点，合成为 {len(cluster_data)} 个多维空间簇。最终输出: index.html")
 
 if __name__ == "__main__":
-    TARGET_DIR = os.path.join(os.path.dirname(__file__), "..", "photos")
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    
+    # 本地照片路径及腾讯云 COS 访问域名
+    TARGET_DIR = os.path.join(current_dir, "..", "photos")
     CLOUD_URL = "https://travel-map-data-1422023265.cos.ap-shanghai.myqcloud.com"
     
-    process_photos_and_generate_map(TARGET_DIR, CLOUD_URL)
+    if os.path.exists(TARGET_DIR):
+        process_photos_and_generate_map(TARGET_DIR, CLOUD_URL)
+    else:
+        print(f"环境自检异常：找不到目录 {TARGET_DIR}，请核实文件夹的物理位置。")
