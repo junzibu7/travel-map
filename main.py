@@ -68,6 +68,6 @@ def process_photos_and_generate_map(local_photo_dir, cloud_base_url):
 
 if __name__ == "__main__":
     TARGET_DIR = os.path.join(os.path.dirname(__file__), "..", "photos")
-    CLOUD_URL = "https://travel-map-data-1422023265.cos.ap-shanghai.myqcloud.com/photos"
+    CLOUD_URL = "https://travel-map-data-1422023265.cos.ap-shanghai.myqcloud.com"
     
     process_photos_and_generate_map(TARGET_DIR, CLOUD_URL)
