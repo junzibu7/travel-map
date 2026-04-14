@@ -67,7 +67,7 @@ def process_photos_and_generate_map(local_photo_dir, cloud_base_url):
     print(f"\n批处理管线执行完毕。空间映射矩阵已注入 {valid_count} 个对象节点。输出持久化文件: index.html")
 
 if __name__ == "__main__":
-    TARGET_DIR = "./photos" 
-    CLOUD_URL = "https://www.jianguoyun.com/p/DZOYEqYQg8L-DBjLyJ0GIAA"
+    TARGET_DIR = os.path.join(os.path.dirname(__file__), "..", "photos")
+    CLOUD_URL = "https://travel-map-data-1422023265.cos.ap-shanghai.myqcloud.com/photos"
     
     process_photos_and_generate_map(TARGET_DIR, CLOUD_URL)
