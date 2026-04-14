@@ -70,35 +70,49 @@ def process_photos_and_generate_map(local_photo_dir, cloud_base_url):
         center_lat = sum(p['lat'] for p in photos) / len(photos)
         center_lon = sum(p['lon'] for p in photos) / len(photos)
         
-        # 调整弹窗内部标题的字体尺度
-        gallery_html = f'<div style="width: 400px; font-family: sans-serif;">'
-        gallery_html += f'<h4 style="margin: 0 0 15px 0; color: #2c3e50; text-align: center; border-bottom: 2px solid #ecf0f1; padding-bottom: 12px; font-size: 14px;">{label} <span style="font-size: 11px; color: #7f8c8d;">({len(photos)}张)</span></h4>'
-        
-        # 左右翻页按钮和图片滚动容器
-        gallery_html += f"""
-        <div style="display: flex; align-items: center; gap: 10px;">
-            <button onclick="document.getElementById('gallery_{label}').scrollBy({{left: -400, behavior: 'smooth'}})" style="background: #3498db; color: white; border: none; border-radius: 50%; width: 40px; height: 40px; cursor: pointer; font-size: 20px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.2); flex-shrink: 0;">&#10094;</button>
-            <div id="gallery_{label}" style="display: flex; overflow-x: auto; gap: 15px; scroll-snap-type: x mandatory; padding-bottom: 10px; flex: 1; scroll-behavior: smooth;">
+        # 1. 注入内联 CSS 覆盖 Leaflet 原生弹窗的厚重白边，并设定紧凑的容器基准
+        gallery_html = f"""
+        <style>
+            .leaflet-popup-content {{ margin: 8px !important; width: 320px !important; }}
+            .leaflet-popup-content p {{ margin: 0 !important; }}
+        </style>
+        <div style="width: 320px; font-family: sans-serif;">
         """
         
-        # 动态注入簇内所有的独立影像流
+        # 收紧标题的上下留白与边框间距
+        gallery_html += f'<h4 style="margin: 0 0 8px 0; color: #2c3e50; text-align: center; border-bottom: 1px solid #ecf0f1; padding-bottom: 6px; font-size: 10px;">{label} <span style="font-size: 8px; color: #7f8c8d;">({len(photos)}张)</span></h4>'
+        
+        # 2. 注入精准布局：应用 translateY(-10px) 对齐图片中线，运用子节点补偿消除箭头视觉偏移
+        gallery_html += f"""
+        <div style="display: flex; align-items: center; gap: 8px;">
+            <button onclick="document.getElementById('gallery_{label}').scrollBy({{left: -320, behavior: 'smooth'}})" style="background: #3498db; color: white; border: none; border-radius: 50%; width: 24px; height: 24px; cursor: pointer; font-size: 12px; display: flex; align-items: center; justify-content: center; box-shadow: 0 1px 4px rgba(0,0,0,0.2); flex-shrink: 0; padding: 0; transform: translateY(-10px); outline: none;">
+                <span style="display: block; margin-top: -1.5px; margin-left: -1.5px;">&#10094;</span>
+            </button>
+            <div id="gallery_{label}" style="display: flex; overflow-x: auto; gap: 8px; scroll-snap-type: x mandatory; padding-bottom: 4px; flex: 1; scroll-behavior: smooth;">
+        """
+        
+        # 动态注入簇内影像，收紧内部边距
         for p in photos:
-            # 将字典取值动作剥离出 f-string 内部，彻底消除引号转义冲突
             img_url = p['url']
             img_date = p['date']
             
             gallery_html += f"""
             <div style="flex: 0 0 100%; scroll-snap-align: start; text-align: center;">
                 <a href="#" onclick="if(confirm('确定要下载这张高清图片吗？')){{window.open('{img_url}', '_blank');}} return false;" style="text-decoration: none;" title="点击查看高清原图">
-                    <img src="{img_url}" style="width: 100%; height: 250px; object-fit: cover; border-radius: 10px; box-shadow: 0 6px 12px rgba(0,0,0,0.15); cursor: pointer;">
+                    <img src="{img_url}" style="width: 100%; height: 200px; object-fit: cover; border-radius: 6px; box-shadow: 0 2px 6px rgba(0,0,0,0.15); cursor: pointer;">
                 </a>
-                <p style="margin: 8px 0 0 0; font-size: 14px; color: #7f8c8d;">拍摄时间: {img_date}</p>
+                <p style="margin: 6px 0 0 0; font-size: 10px; color: #7f8c8d;">拍摄时间: {img_date}</p>
             </div>
             """
             
         gallery_html += '</div>'
-        gallery_html += f'<button onclick="document.getElementById(\'gallery_{label}\').scrollBy({{left: 400, behavior: \'smooth\'}})" style="background: #3498db; color: white; border: none; border-radius: 50%; width: 40px; height: 40px; cursor: pointer; font-size: 20px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.2); flex-shrink: 0;">&#10095;</button>'
-        gallery_html += '</div></div>'
+        # 右侧按钮同步执行几何补偿与光学居中调整
+        gallery_html += f"""
+            <button onclick="document.getElementById('gallery_{label}').scrollBy({{left: 320, behavior: 'smooth'}})" style="background: #3498db; color: white; border: none; border-radius: 50%; width: 24px; height: 24px; cursor: pointer; font-size: 12px; display: flex; align-items: center; justify-content: center; box-shadow: 0 1px 4px rgba(0,0,0,0.2); flex-shrink: 0; padding: 0; transform: translateY(-10px); outline: none;">
+                <span style="display: block; margin-top: -1.5px; margin-left: 1.5px;">&#10095;</span>
+            </button>
+        </div></div>
+        """
         
         # 1. 显式实例化 Tooltip 组件并注入 CSS 内联样式，将字体收敛至 10px
         custom_tooltip = folium.Tooltip(
