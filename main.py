@@ -1,6 +1,7 @@
 import os
 import exifread
 import folium
+import urllib.parse
 
 def dms_to_decimal(dms_list, ref):
     """将 EXIF 中的度分秒格式转换为 WGS84 十进制度"""
@@ -12,6 +13,21 @@ def dms_to_decimal(dms_list, ref):
     if ref in ['S', 'W']:
         decimal = -decimal
     return decimal
+
+def get_encoded_url(cloud_base_url, relative_path):
+    """
+    将包含中文的本地相对路径转化为标准云端 URL
+    """
+    # 确保在不同系统下生成的路径逻辑一致
+    normalized_path = relative_path.replace(os.sep, '/')
+    
+    # 执行 URL 编码
+    encoded_path = urllib.parse.quote(normalized_path, safe='/')
+    
+    # 拼接基础 URL 和编码后的路径
+    final_url = f"{cloud_base_url}/{encoded_path}"
+    
+    return final_url
 
 def process_photos_and_generate_map(local_photo_dir, cloud_base_url):
     print(f"系统开始扫描数据源目录及其底层子架构: {local_photo_dir}")
@@ -42,9 +58,8 @@ def process_photos_and_generate_map(local_photo_dir, cloud_base_url):
                 lon = dms_to_decimal(lon_dms, lon_ref)
                 date_time = tags.get('EXIF DateTimeOriginal', '未知时间')
                 
-                # 路径规范化机制：将本地系统的反斜杠映射为标准 URL 的正斜杠
-                url_path = rel_path.replace(os.sep, '/')
-                image_url = f"{cloud_base_url}/{url_path}"
+                # 使用get_encoded_url函数处理中文路径
+                image_url = get_encoded_url(cloud_base_url, rel_path)
                 
                 popup_html = f"""
                 <div style="width: 200px; font-family: sans-serif;">
