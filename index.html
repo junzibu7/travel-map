@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.0/css/all.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css"/>
+    
+            <meta name="viewport" content="width=device-width,
+                initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+            <style>
+                #map_c1b4307f18f08960794bd6b573012fe3 {
+                    position: relative;
+                    width: 100.0%;
+                    height: 100.0%;
+                    left: 0.0%;
+                    top: 0.0%;
+                }
+                .leaflet-container { font-size: 1rem; }
+            </style>
+
+            <style>html, body {
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 0;
+            }
+            </style>
+
+            <style>#map {
+                position:absolute;
+                top:0;
+                bottom:0;
+                right:0;
+                left:0;
+                }
+            </style>
+
+            <script>
+                L_NO_TOUCH = false;
+                L_DISABLE_3D = false;
+            </script>
+
+        
+</head>
+<body>
+    
+    
+            <div class="folium-map" id="map_c1b4307f18f08960794bd6b573012fe3" ></div>
+        
+</body>
+<script>
+    
+    
+            var map_c1b4307f18f08960794bd6b573012fe3 = L.map(
+                "map_c1b4307f18f08960794bd6b573012fe3",
+                {
+                    center: [35.0, 105.0],
+                    crs: L.CRS.EPSG3857,
+                    ...{
+  "zoom": 4,
+  "zoomControl": true,
+  "preferCanvas": false,
+}
+
+                }
+            );
+
+            
+
+        
+    
+            var tile_layer_1efd9e30f8dcfa92b03b7a1634b37a41 = L.tileLayer(
+                "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
+                {
+  "minZoom": 0,
+  "maxZoom": 20,
+  "maxNativeZoom": 20,
+  "noWrap": false,
+  "attribution": "\u0026copy; \u003ca href=\"https://www.openstreetmap.org/copyright\"\u003eOpenStreetMap\u003c/a\u003e contributors \u0026copy; \u003ca href=\"https://carto.com/attributions\"\u003eCARTO\u003c/a\u003e",
+  "subdomains": "abcd",
+  "detectRetina": false,
+  "tms": false,
+  "opacity": 1,
+}
+
+            );
+        
+    
+            tile_layer_1efd9e30f8dcfa92b03b7a1634b37a41.addTo(map_c1b4307f18f08960794bd6b573012fe3);
+        
+    
+            var marker_9f9bee4b0c3631063d1010bb99b54930 = L.marker(
+                [27.1290615, 100.24857043997669],
+                {
+}
+            ).addTo(map_c1b4307f18f08960794bd6b573012fe3);
+        
+    
+            var icon_e2dfca7a22065c27cbaf336e6ba14242 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "camera",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_5bd8e052e87958a9e9e44ce4ebb22350 = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_f780ad505eae1d8ff2304a451c92bf5d = $(`<div id="html_f780ad505eae1d8ff2304a451c92bf5d" style="width: 100.0%; height: 100.0%;">                 <div style="width: 200px; font-family: sans-serif;">                     <a href="https://www.jianguoyun.com/p/DZOYEqYQg8L-DBjLyJ0GIAA/蓝月谷/IMG_20250714_135023.jpg" target="_blank">                         <img src="https://www.jianguoyun.com/p/DZOYEqYQg8L-DBjLyJ0GIAA/蓝月谷/IMG_20250714_135023.jpg" style="width: 100%; border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">                     </a>                     <p style="margin-top: 8px; font-size: 12px; color: #555; text-align: center;">2025:07:14 13:50:23</p>                 </div>                 </div>`)[0];
+                popup_5bd8e052e87958a9e9e44ce4ebb22350.setContent(html_f780ad505eae1d8ff2304a451c92bf5d);
+            
+        
+
+        marker_9f9bee4b0c3631063d1010bb99b54930.bindPopup(popup_5bd8e052e87958a9e9e44ce4ebb22350)
+        ;
+
+        
+    
+    
+                marker_9f9bee4b0c3631063d1010bb99b54930.setIcon(icon_e2dfca7a22065c27cbaf336e6ba14242);
+            
+    
+            var marker_42ecc49502860469425d9695e0a86630 = L.marker(
+                [27.1290615, 100.24857043997669],
+                {
+}
+            ).addTo(map_c1b4307f18f08960794bd6b573012fe3);
+        
+    
+            var icon_c68dfaf605a9b95750f21cdf383263f5 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "camera",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_b4b65c8e77735fccfe3ad6585d0555c4 = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_aa74151224708feda5dfa76bc4ffd65a = $(`<div id="html_aa74151224708feda5dfa76bc4ffd65a" style="width: 100.0%; height: 100.0%;">                 <div style="width: 200px; font-family: sans-serif;">                     <a href="https://www.jianguoyun.com/p/DZOYEqYQg8L-DBjLyJ0GIAA/蓝月谷/IMG_20250714_141659.jpg" target="_blank">                         <img src="https://www.jianguoyun.com/p/DZOYEqYQg8L-DBjLyJ0GIAA/蓝月谷/IMG_20250714_141659.jpg" style="width: 100%; border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">                     </a>                     <p style="margin-top: 8px; font-size: 12px; color: #555; text-align: center;">2025:07:14 14:17:00</p>                 </div>                 </div>`)[0];
+                popup_b4b65c8e77735fccfe3ad6585d0555c4.setContent(html_aa74151224708feda5dfa76bc4ffd65a);
+            
+        
+
+        marker_42ecc49502860469425d9695e0a86630.bindPopup(popup_b4b65c8e77735fccfe3ad6585d0555c4)
+        ;
+
+        
+    
+    
+                marker_42ecc49502860469425d9695e0a86630.setIcon(icon_c68dfaf605a9b95750f21cdf383263f5);
+            
+    
+            var marker_57d686f009ef20aa7486f560583cddb7 = L.marker(
+                [27.1290615, 100.24857043997669],
+                {
+}
+            ).addTo(map_c1b4307f18f08960794bd6b573012fe3);
+        
+    
+            var icon_407b02b9d6f4cf3c090e0b74ab4e63a6 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "camera",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_2d28dedb4a5d3be58e32ac18addbf547 = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_79c2d85b12990b37bf621b2b7670b518 = $(`<div id="html_79c2d85b12990b37bf621b2b7670b518" style="width: 100.0%; height: 100.0%;">                 <div style="width: 200px; font-family: sans-serif;">                     <a href="https://www.jianguoyun.com/p/DZOYEqYQg8L-DBjLyJ0GIAA/蓝月谷/IMG_20250714_141710.jpg" target="_blank">                         <img src="https://www.jianguoyun.com/p/DZOYEqYQg8L-DBjLyJ0GIAA/蓝月谷/IMG_20250714_141710.jpg" style="width: 100%; border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">                     </a>                     <p style="margin-top: 8px; font-size: 12px; color: #555; text-align: center;">2025:07:14 14:17:10</p>                 </div>                 </div>`)[0];
+                popup_2d28dedb4a5d3be58e32ac18addbf547.setContent(html_79c2d85b12990b37bf621b2b7670b518);
+            
+        
+
+        marker_57d686f009ef20aa7486f560583cddb7.bindPopup(popup_2d28dedb4a5d3be58e32ac18addbf547)
+        ;
+
+        
+    
+    
+                marker_57d686f009ef20aa7486f560583cddb7.setIcon(icon_407b02b9d6f4cf3c090e0b74ab4e63a6);
+            
+    
+            var marker_04aeafb66c4d2a029ea273602ce1bb40 = L.marker(
+                [27.1290615, 100.24857043997669],
+                {
+}
+            ).addTo(map_c1b4307f18f08960794bd6b573012fe3);
+        
+    
+            var icon_166956afedf079396eaa784982ed75e5 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "camera",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_2041bbc7475dfc55ac277fb2b8f2bda5 = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_43942ffb3e000f4cfb57c231e1c0e28f = $(`<div id="html_43942ffb3e000f4cfb57c231e1c0e28f" style="width: 100.0%; height: 100.0%;">                 <div style="width: 200px; font-family: sans-serif;">                     <a href="https://www.jianguoyun.com/p/DZOYEqYQg8L-DBjLyJ0GIAA/蓝月谷/IMG_20250714_141716.jpg" target="_blank">                         <img src="https://www.jianguoyun.com/p/DZOYEqYQg8L-DBjLyJ0GIAA/蓝月谷/IMG_20250714_141716.jpg" style="width: 100%; border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">                     </a>                     <p style="margin-top: 8px; font-size: 12px; color: #555; text-align: center;">2025:07:14 14:17:16</p>                 </div>                 </div>`)[0];
+                popup_2041bbc7475dfc55ac277fb2b8f2bda5.setContent(html_43942ffb3e000f4cfb57c231e1c0e28f);
+            
+        
+
+        marker_04aeafb66c4d2a029ea273602ce1bb40.bindPopup(popup_2041bbc7475dfc55ac277fb2b8f2bda5)
+        ;
+
+        
+    
+    
+                marker_04aeafb66c4d2a029ea273602ce1bb40.setIcon(icon_166956afedf079396eaa784982ed75e5);
+            
+    
+            var marker_cc320988090f11ee27bdbe7a9f575bf4 = L.marker(
+                [27.1290615, 100.24857043997669],
+                {
+}
+            ).addTo(map_c1b4307f18f08960794bd6b573012fe3);
+        
+    
+            var icon_681721fb18b0573f664fd6dada51f4af = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "camera",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_475667394f54c4669fb8434947cf779c = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_65a4c191d966d303968d4868ee92a6e0 = $(`<div id="html_65a4c191d966d303968d4868ee92a6e0" style="width: 100.0%; height: 100.0%;">                 <div style="width: 200px; font-family: sans-serif;">                     <a href="https://www.jianguoyun.com/p/DZOYEqYQg8L-DBjLyJ0GIAA/蓝月谷/IMG_20250714_141841.jpg" target="_blank">                         <img src="https://www.jianguoyun.com/p/DZOYEqYQg8L-DBjLyJ0GIAA/蓝月谷/IMG_20250714_141841.jpg" style="width: 100%; border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">                     </a>                     <p style="margin-top: 8px; font-size: 12px; color: #555; text-align: center;">2025:07:14 14:18:41</p>                 </div>                 </div>`)[0];
+                popup_475667394f54c4669fb8434947cf779c.setContent(html_65a4c191d966d303968d4868ee92a6e0);
+            
+        
+
+        marker_cc320988090f11ee27bdbe7a9f575bf4.bindPopup(popup_475667394f54c4669fb8434947cf779c)
+        ;
+
+        
+    
+    
+                marker_cc320988090f11ee27bdbe7a9f575bf4.setIcon(icon_681721fb18b0573f664fd6dada51f4af);
+            
+    
+            var marker_26760bccfdb1d7f8a268df70a6722d1a = L.marker(
+                [27.1290615, 100.24857043997669],
+                {
+}
+            ).addTo(map_c1b4307f18f08960794bd6b573012fe3);
+        
+    
+            var icon_acd8fc871ece44f7ef30387a449d2a86 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "camera",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_25ed4b6eda71ebb600512760f2e448f3 = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_c6dde14bc10af4cdb6786ec3235d6e56 = $(`<div id="html_c6dde14bc10af4cdb6786ec3235d6e56" style="width: 100.0%; height: 100.0%;">                 <div style="width: 200px; font-family: sans-serif;">                     <a href="https://www.jianguoyun.com/p/DZOYEqYQg8L-DBjLyJ0GIAA/蓝月谷/IMG_20250714_141909.jpg" target="_blank">                         <img src="https://www.jianguoyun.com/p/DZOYEqYQg8L-DBjLyJ0GIAA/蓝月谷/IMG_20250714_141909.jpg" style="width: 100%; border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">                     </a>                     <p style="margin-top: 8px; font-size: 12px; color: #555; text-align: center;">2025:07:14 14:19:10</p>                 </div>                 </div>`)[0];
+                popup_25ed4b6eda71ebb600512760f2e448f3.setContent(html_c6dde14bc10af4cdb6786ec3235d6e56);
+            
+        
+
+        marker_26760bccfdb1d7f8a268df70a6722d1a.bindPopup(popup_25ed4b6eda71ebb600512760f2e448f3)
+        ;
+
+        
+    
+    
+                marker_26760bccfdb1d7f8a268df70a6722d1a.setIcon(icon_acd8fc871ece44f7ef30387a449d2a86);
+            
+    
+            var marker_af24fd76b7d09ecffb593c6391d0766f = L.marker(
+                [27.1290615, 100.24857043997669],
+                {
+}
+            ).addTo(map_c1b4307f18f08960794bd6b573012fe3);
+        
+    
+            var icon_ab8cbc6e6f7efe78fb5f4f2b71fac3e2 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "camera",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_b23dc466027b4248cd4953887a92987a = L.popup({
+  "maxWidth": 250,
+});
+
+        
+            
+                var html_708a28f7ae42fb6f30ad8acbbf782350 = $(`<div id="html_708a28f7ae42fb6f30ad8acbbf782350" style="width: 100.0%; height: 100.0%;">                 <div style="width: 200px; font-family: sans-serif;">                     <a href="https://www.jianguoyun.com/p/DZOYEqYQg8L-DBjLyJ0GIAA/蓝月谷/IMG_20250714_142028.jpg" target="_blank">                         <img src="https://www.jianguoyun.com/p/DZOYEqYQg8L-DBjLyJ0GIAA/蓝月谷/IMG_20250714_142028.jpg" style="width: 100%; border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">                     </a>                     <p style="margin-top: 8px; font-size: 12px; color: #555; text-align: center;">2025:07:14 14:20:29</p>                 </div>                 </div>`)[0];
+                popup_b23dc466027b4248cd4953887a92987a.setContent(html_708a28f7ae42fb6f30ad8acbbf782350);
+            
+        
+
+        marker_af24fd76b7d09ecffb593c6391d0766f.bindPopup(popup_b23dc466027b4248cd4953887a92987a)
+        ;
+
+        
+    
+    
+                marker_af24fd76b7d09ecffb593c6391d0766f.setIcon(icon_ab8cbc6e6f7efe78fb5f4f2b71fac3e2);
+            
+</script>
+</html>
