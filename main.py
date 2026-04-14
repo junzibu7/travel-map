@@ -148,10 +148,10 @@ def process_photos_and_generate_map(local_photo_dir, cloud_base_url):
             style="font-size: 10px;"
         )
         
-        # 构建矢量大头针
-        # 设计规范：16px x 32px 尺寸，蓝白配色
+        # 构建放大一倍的矢量大头针
+        # 物理视口扩张至 32px x 40px，利用 viewBox 锁定内部相对坐标系
         svg_icon = """
-        <svg width="16" height="20" viewBox="0 0 16 20" xmlns="http://www.w3.org/2000/svg">
+        <svg width="32" height="40" viewBox="0 0 16 20" xmlns="http://www.w3.org/2000/svg">
             <polygon points="2,11 14,11 8,20" fill="#3498db" />
             <circle cx="8" cy="8" r="5.15" fill="white" stroke="#3498db" stroke-width="3" />
         </svg>
@@ -159,8 +159,8 @@ def process_photos_and_generate_map(local_photo_dir, cloud_base_url):
 
         custom_icon = folium.DivIcon(
             html=svg_icon,
-            # 渲染锚点必须与 SVG 画布的新高度保持绝对同步
-            icon_anchor=(8, 20)
+            # 渲染锚点执行严格的几何补偿，与翻倍后的物理视口宽度中轴和高度底边绝对同步
+            icon_anchor=(16, 40)
         )
 
         # 实例化地图组件，绑定聚合参数、自定义Tooltip和小巧的大头针图标
