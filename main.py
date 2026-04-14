@@ -31,18 +31,18 @@ def process_photos_and_generate_map(local_photo_dir, cloud_base_url):
     cluster_icon_js = """
     function(cluster) {
         var count = cluster.getChildCount();
-        // 动态生成与独立标记拓扑一致的 SVG 矢量流，并利用 dy=".3em" 实现数字的绝对光学居中
-        var svg = '<svg width="16" height="20" viewBox="0 0 16 20" xmlns="http://www.w3.org/2000/svg">' +
+        // 利用 viewBox 锁定内部坐标系，仅将外层物理视口的长宽延伸至 200% (32x40)
+        var svg = '<svg width="32" height="40" viewBox="0 0 16 20" xmlns="http://www.w3.org/2000/svg">' +
                   '<polygon points="2,11 14,11 8,20" fill="#3498db" />' +
-                  '<circle cx="8" cy="8" r="5.8" fill="white" stroke="#3498db" stroke-width="1.4" />' +
-                  '<text x="8" y="8.5" dy=".3em" font-size="8" font-family="sans-serif" font-weight="bold" fill="#3498db" text-anchor="middle">' + count + '</text>' +
+                  '<circle cx="8" cy="8" r="5.8" fill="white" stroke="#3498db" stroke-width="1.6" />' +
+                  '<text x="8" y="8.5" dy=".3em" font-size="9" font-family="sans-serif" font-weight="bold" fill="#3498db" text-anchor="middle">' + count + '</text>' +
                   '</svg>';
                   
         return L.divIcon({
             html: svg,
-            className: 'custom-cluster-marker', // 注入自定义类名以屏蔽引擎默认的背景渲染
-            iconSize: L.point(16, 20),
-            iconAnchor: L.point(8, 20)
+            className: 'custom-cluster-marker', 
+            iconSize: L.point(32, 40), // 物理边界同步扩大一倍
+            iconAnchor: L.point(16, 40) // 渲染锚点执行严格的几何补偿，确保坐标系统拓扑对齐
         });
     }
     """
